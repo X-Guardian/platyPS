@@ -116,6 +116,8 @@ function New-MarkdownHelp
         [string]
         $ModuleGuid = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
 
+        [switch]$HeaderBlankLines
+
         [switch]
         $ExcludeDontShow
     )
@@ -317,7 +319,8 @@ function New-MarkdownHelp
                                         -Version $HelpVersion `
                                         -FwLink $FwLink `
                                         -Encoding $Encoding `
-                                        -Force:$Force
+                                        -Force:$Force `
+                                        -HeaderBlankLines:$HeaderBlankLines
                 }
             }
         }
@@ -600,7 +603,8 @@ function Update-MarkdownHelpModule
         [switch]$UpdateInputOutput,
         [switch]$Force,
         [System.Management.Automation.Runspaces.PSSession]$Session,
-        [switch]$ExcludeDontShow
+        [switch]$ExcludeDontShow,
+        [switch]$HeaderBlankLines
     )
 
     begin
@@ -677,7 +681,7 @@ function Update-MarkdownHelpModule
                 $MamlModel = New-Object System.Collections.Generic.List[Markdown.MAML.Model.MAML.MamlCommand]
                 $files = @()
                 $MamlModel = GetMamlModelImpl $affectedFiles -ForAnotherMarkdown -Encoding $Encoding
-                NewModuleLandingPage  -RefreshModulePage -ModulePagePath $ModulePagePath -Path $modulePath -ModuleName $module -Module $MamlModel -Encoding $Encoding -Force
+                NewModuleLandingPage  -RefreshModulePage -ModulePagePath $ModulePagePath -Path $modulePath -ModuleName $module -Module $MamlModel -Encoding $Encoding -Force -HeaderBlankLines:$HeaderBlankLines
             }
         }
     }
@@ -1975,7 +1979,8 @@ function NewModuleLandingPage
         $Module,
         [Parameter(mandatory=$true)]
         [System.Text.Encoding]$Encoding = $script:UTF8_NO_BOM,
-        [switch]$Force
+        [switch]$Force,
+        [switch]$HeaderBlankLines
     )
 
     begin
@@ -2029,12 +2034,17 @@ function NewModuleLandingPage
                 $Description = $LocalizedData.Description
             }
         }
+        $HeaderPadding='`r`n'
+
+        If ($HeaderBlankLines) {
+            $HeaderPadding += '`r`n'
+        }
 
         $Content = "---`r`nModule Name: $ModuleName`r`nModule Guid: $ModuleGuid`r`nDownload Help Link: $FwLink`r`n"
         $Content += "Help Version: $Version`r`nLocale: $Locale`r`n"
         $Content += "---`r`n`r`n"
-        $Content += "# $ModuleName Module`r`n## Description`r`n"
-        $Content += "$Description`r`n`r`n## $ModuleName Cmdlets`r`n"
+        $Content += "# $ModuleName Module" + $HeaderPadding + "## Description" + $HeaderPadding
+        $Content += "$Description`r`n`r`n## $ModuleName Cmdlets" + $HeaderPadding
 
         if($RefreshModulePage)
         {
@@ -2042,18 +2052,18 @@ function NewModuleLandingPage
                 $command = $_
                 if(-not $command.Synopsis)
                 {
-                    $Content += "### [" + $command.Name + "](" + $command.Name + ".md)`r`n" + $LocalizedData.Description + "`r`n`r`n"
+                    $Content += "### [" + $command.Name + "](" + $command.Name + ".md)" + $HeaderPadding + $LocalizedData.Description + "`r`n`r`n"
                 }
                 else
                 {
-                    $Content += "### [" + $command.Name + "](" + $command.Name + ".md)`r`n" + $command.Synopsis + "`r`n`r`n"
+                    $Content += "### [" + $command.Name + "](" + $command.Name + ".md)" + $HeaderPadding + $command.Synopsis + "`r`n`r`n"
                 }
             }
         }
         else
         {
             $CmdletNames | ForEach-Object {
-                $Content += "### [" + $_ + "](" + $_ + ".md)`r`n" + $LocalizedData.Description + "`r`n`r`n"
+                $Content += "### [" + $_ + "](" + $_ + ".md)" + $HeaderPadding + $LocalizedData.Description + "`r`n`r`n"
             }
         }
 

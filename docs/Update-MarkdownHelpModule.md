@@ -230,6 +230,14 @@ Exclude the parameters marked with `DontShow` in the parameter attribute from th
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
+
+### -HeaderBlankLines
+Indicates that this cmdlet should include blank lines after headers. This then produces markdown that conforms to rule
+[MD022 - Headers should be surrounded by blank lines](https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md#md022---headers-should-be-surrounded-by-blank-lines) of [MarkDownLint](https://github.com/markdownlint/markdownlint)
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: FromModule, FromMaml
 Aliases:
 
 Required: False

@@ -499,6 +499,16 @@ Write-Host 'Hello World!'
 
         }
 
+        It "generates a landing page from Module with HeaderBlankLines"{
+
+            New-MarkdownHelp -Module PlatyPS -OutputFolder $OutputFolder -WithModulePage -Force -HeaderBlankLines
+
+            $LandingPage = Get-ChildItem (Join-Path $OutputFolder PlatyPS.md)
+
+            $LandingPage | Should Not Be $null
+
+        }
+
         It "generates a landing page from MAML"{
 
             New-MarkdownHelp -MamlFile (Get-ChildItem "$outFolder\platyPS\en-US\platy*xml") `
@@ -513,6 +523,21 @@ Write-Host 'Hello World!'
 
         }
 
+        It "generates a landing page from MAML with HeaderBlankLines"{
+
+            New-MarkdownHelp -MamlFile (Get-ChildItem "$outFolder\platyPS\en-US\platy*xml") `
+                        -OutputFolder $OutputFolder `
+                        -WithModulePage `
+                        -ModuleName "PlatyPS" `
+                        -Force `
+                        -HeaderblankLines
+
+            $LandingPage = Get-ChildItem (Join-Path $OutputFolder PlatyPS.md)
+
+            $LandingPage | Should Not Be $null
+
+        }
+
         it 'generate a landing page from Module with parameter ModulePagePath' {
             New-MarkdownHelp -Module PlatyPS -OutputFolder $OutputFolder -WithModulePage -ModulePagePath $OutputFolderReadme -Force
 
@@ -520,6 +545,12 @@ Write-Host 'Hello World!'
             $LandingPage | Should Not Be $null
         }
 
+        it 'generate a landing page from Module with parameter ModulePagePath with HeaderBlankLines' {
+            New-MarkdownHelp -Module PlatyPS -OutputFolder $OutputFolder -WithModulePage -ModulePagePath $OutputFolderReadme -Force -HeaderBlankLines
+
+            $LandingPage = Test-Path -Path $OutputFolderReadme
+            $LandingPage | Should Not Be $null
+        }
     }
 
 	Context 'Full Type Name' {
