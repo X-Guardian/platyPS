@@ -2034,10 +2034,10 @@ function NewModuleLandingPage
                 $Description = $LocalizedData.Description
             }
         }
-        $HeaderPadding='`r`n'
+        $HeaderPadding="`r`n"
 
         If ($HeaderBlankLines) {
-            $HeaderPadding += '`r`n'
+            $HeaderPadding += "`r`n"
         }
 
         $Content = "---`r`nModule Name: $ModuleName`r`nModule Guid: $ModuleGuid`r`nDownload Help Link: $FwLink`r`n"
